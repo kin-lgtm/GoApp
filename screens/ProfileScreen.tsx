@@ -197,7 +197,7 @@ const getStyles = (isDarkMode: boolean) =>
       width: 100,
       height: 100,
       borderRadius: 50,
-      backgroundColor: '#007AFF',
+      backgroundColor: '#00C853',
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -209,12 +209,12 @@ const getStyles = (isDarkMode: boolean) =>
     name: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: isDarkMode ? '#fff' : '#000',
+      color: isDarkMode ? '#fff' : '#00C853',
       marginBottom: 4,
     },
     username: {
       fontSize: 16,
-      color: '#007AFF',
+      color: '#00C853',
       marginBottom: 4,
     },
     email: {

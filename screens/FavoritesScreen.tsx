@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -49,7 +49,7 @@ const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation: navProp }
             </View>
           </View>
           <TouchableOpacity onPress={() => handleToggleFavorite(item)}>
-            <Feather name="heart" size={22} color="#FF3B30" fill="#FF3B30" />
+            <MaterialIcons name="favorite" size={22} color="#00C853" />
           </TouchableOpacity>
         </View>
 
@@ -153,7 +153,7 @@ const getStyles = (isDarkMode: boolean) =>
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: isDarkMode ? '#fff' : '#000',
+      color: isDarkMode ? '#fff' : '#00C853',
     },
     subtitle: {
       fontSize: 14,

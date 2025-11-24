@@ -227,7 +227,7 @@ const getStyles = (isDarkMode: boolean) =>
     title: {
       fontSize: 32,
       fontWeight: 'bold',
-      color: isDarkMode ? '#fff' : '#000',
+      color: isDarkMode ? '#fff' : '#00C853',
     },
     subtitle: {
       fontSize: 16,

@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
@@ -123,11 +123,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
             </View>
           </View>
           <TouchableOpacity onPress={() => handleToggleFavorite(item)} style={styles.favoriteButton}>
-            <Feather
-              name={isFavorite(item.id) ? 'heart' : 'heart'}
+            <MaterialIcons
+              name={isFavorite(item.id) ? 'favorite' : 'favorite-border'}
               size={22}
-              color={isFavorite(item.id) ? '#FF3B30' : isDarkMode ? '#999' : '#666'}
-              fill={isFavorite(item.id) ? '#FF3B30' : 'transparent'}
+              color={isFavorite(item.id) ? '#00C853' : isDarkMode ? '#999' : '#666'}
             />
           </TouchableOpacity>
         </View>
@@ -275,7 +274,7 @@ const getStyles = (isDarkMode: boolean) =>
     greeting: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: isDarkMode ? '#fff' : '#000',
+      color: isDarkMode ? '#fff' : '#00C853',
     },
     headerSubtitle: {
       fontSize: 14,

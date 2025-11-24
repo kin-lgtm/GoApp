@@ -1,8 +1,8 @@
 import { TransportItem } from '../store/slices/favoritesSlice';
 
 // TransportAPI credentials
-const TRANSPORT_API_ID = '24be61e9';
-const TRANSPORT_API_KEY = '5aa8f192fab126e1d6fef370e5b2bc8d';
+const TRANSPORT_API_ID = 'ffe089fa';
+const TRANSPORT_API_KEY = '48536326681d48200fdbb8a7ec39e1bf';
 const TRANSPORT_API_BASE = 'https://transportapi.com/v3/uk';
 
 // Default location for demo (London)
@@ -28,18 +28,28 @@ export const transportService = {
         return getMockRoutes();
       }
 
-      const routes: TransportItem[] = data.member.slice(0, 20).map((stop: any, index: number) => ({
-        id: stop.atcocode || `stop-${index}`,
-        title: `${getTransportType(index)} to ${stop.name || 'Unknown Destination'}`,
-        description: `${stop.description || 'Public transport route'} - ${stop.locality || 'Local area'}`,
-        image: getTransportImage(index),
-        status: index < 5 ? 'Popular' : index < 12 ? 'Active' : 'Upcoming',
-        type: getTransportType(index),
-        departure: getDepartureTime(index),
-        arrival: getArrivalTime(index),
-        duration: getDuration(index),
-        price: Math.round((5 + Math.random() * 15) * 100) / 100,
-      }));
+      const routes: TransportItem[] = data.member.slice(0, 20).map((stop: any, index: number) => {
+        // Clean up stop name - remove "Stop A/B/C" labels
+        const cleanName = (stop.name || 'Unknown Destination')
+          .replace(/Stop [A-Z]$/i, '')
+          .replace(/\s+$/, '')
+          .trim();
+        
+        const locality = stop.locality || 'London';
+        
+        return {
+          id: stop.atcocode || `stop-${index}`,
+          title: `${getTransportType(index)} to ${cleanName || locality}`,
+          description: `${stop.description || 'Public transport route'} - ${locality}`,
+          image: getTransportImage(index),
+          status: index < 5 ? 'Popular' : index < 12 ? 'Active' : 'Upcoming',
+          type: getTransportType(index),
+          departure: getDepartureTime(index),
+          arrival: getArrivalTime(index),
+          duration: getDuration(index),
+          price: Math.round((5 + Math.random() * 15) * 100) / 100,
+        };
+      });
       
       return routes;
     } catch (error) {
@@ -110,11 +120,11 @@ const getTransportType = (index: number): string => {
 
 const getTransportImage = (index: number): string => {
   const images = [
-    'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400', // Bus
-    'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400', // Train
-    'https://images.unsplash.com/photo-1581262177000-8c619cf0ca3c?w=400', // Metro/Subway
-    'https://images.unsplash.com/photo-1605128258273-37290ea0196c?w=400', // Ferry
-    'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', // Tram
+    'https://res.cloudinary.com/dkqv2vkdk/image/upload/v1763965828/bus_djbo4l.png',
+    'https://res.cloudinary.com/dkqv2vkdk/image/upload/v1763965829/train_uokujn.png',
+    'https://res.cloudinary.com/dkqv2vkdk/image/upload/v1763965828/metro_mpib6d.png',
+    'https://res.cloudinary.com/dkqv2vkdk/image/upload/v1763965827/ferry_phh5jd.png',
+    'https://res.cloudinary.com/dkqv2vkdk/image/upload/v1763965829/tram_g0jbo4.png',
   ];
   return images[index % images.length];
 };

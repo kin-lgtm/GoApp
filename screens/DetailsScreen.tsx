@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import {
     Image,
@@ -53,11 +53,10 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
             style={styles.favoriteButton}
             onPress={handleToggleFavorite}
           >
-            <Feather
-              name={isFavorite ? 'heart' : 'heart'}
+            <MaterialIcons
+              name={isFavorite ? 'favorite' : 'favorite-border'}
               size={24}
-              color={isFavorite ? '#FF3B30' : '#fff'}
-              fill={isFavorite ? '#FF3B30' : 'transparent'}
+              color={isFavorite ? '#00C853' : '#fff'}
             />
           </TouchableOpacity>
         </View>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
+    Image,
     KeyboardAvoidingView,
     Platform,
     ScrollView,
@@ -80,7 +81,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Feather name="navigation" size={50} color="#00C853" />
+            <Image
+              source={require('../assets/images/logo.png')}
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.title}>GoMate</Text>
           <Text style={styles.subtitle}>Book Your Ride, Anytime</Text>
@@ -159,7 +164,7 @@ const getStyles = (isDarkMode: boolean) =>
     title: {
       fontSize: 36,
       fontWeight: 'bold',
-      color: isDarkMode ? '#fff' : '#000',
+      color: isDarkMode ? '#fff' : '#00C853',
       marginTop: 10,
     },
     subtitle: {
@@ -214,6 +219,10 @@ const getStyles = (isDarkMode: boolean) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: 16,
+    },
+    logoImage: {
+      width: 60,
+      height: 60,
     },
     loginButtonText: {
       color: '#fff',
