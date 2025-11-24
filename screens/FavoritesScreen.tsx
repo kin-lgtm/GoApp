@@ -58,17 +58,25 @@ const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation: navProp }
         </Text>
 
         <View style={styles.cardFooter}>
-          <View style={styles.infoItem}>
-            <Feather name="navigation" size={14} color="#00C853" />
-            <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.type}</Text>
+          <View style={styles.footerLeft}>
+            <View style={styles.infoItem}>
+              <Feather name={getTransportIcon(item.type)} size={14} color="#00C853" />
+              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.type}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Feather name="clock" size={14} color="#666" />
+              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.duration}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={[styles.priceText, isDarkMode && styles.textDark]}>${item.price}</Text>
+            </View>
           </View>
-          <View style={styles.infoItem}>
-            <Feather name="clock" size={14} color="#666" />
-            <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.duration}</Text>
-          </View>
-          <View style={styles.priceTag}>
-            <Text style={styles.priceText}>${item.price}</Text>
-          </View>
+          <TouchableOpacity 
+            style={styles.viewButton}
+            onPress={() => navigation.navigate('details', { item: JSON.stringify(item) })}
+          >
+            <Text style={styles.viewButtonText}>View Details</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
@@ -102,16 +110,29 @@ const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation: navProp }
   );
 };
 
+const getTransportIcon = (type?: string): any => {
+  const typeStr = type?.toLowerCase() || '';
+  if (typeStr.includes('train')) return 'navigation';
+  if (typeStr.includes('bus')) return 'truck';
+  if (typeStr.includes('metro') || typeStr.includes('subway')) return 'zap';
+  if (typeStr.includes('tram')) return 'minus';
+  if (typeStr.includes('ferry') || typeStr.includes('boat')) return 'anchor';
+  if (typeStr.includes('flight') || typeStr.includes('plane')) return 'send';
+  if (typeStr.includes('taxi') || typeStr.includes('cab')) return 'navigation-2';
+  if (typeStr.includes('bike') || typeStr.includes('bicycle')) return 'circle';
+  return 'navigation'; // Default
+};
+
 const getStatusBadgeStyle = (status?: string) => {
   switch (status) {
     case 'Popular':
-      return { backgroundColor: '#34C759' };
+      return { backgroundColor: '#00C853' };
     case 'Active':
-      return { backgroundColor: '#007AFF' };
+      return { backgroundColor: '#00A843' };
     case 'Upcoming':
-      return { backgroundColor: '#FF9500' };
+      return { backgroundColor: '#00E863' };
     default:
-      return { backgroundColor: '#999' };
+      return { backgroundColor: '#008F43' };
   }
 };
 
@@ -201,6 +222,12 @@ const getStyles = (isDarkMode: boolean) =>
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+    footerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      flex: 1,
+    },
     infoItem: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -211,16 +238,25 @@ const getStyles = (isDarkMode: boolean) =>
       color: '#000',
       fontWeight: '500',
     },
-    priceTag: {
-      backgroundColor: '#00C853',
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 6,
-    },
     priceText: {
-      color: '#fff',
+      color: '#00C853',
       fontSize: 14,
       fontWeight: '700',
+    },
+    viewButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#00C853',
+    },
+    viewButtonText: {
+      color: '#00C853',
+      fontSize: 13,
+      fontWeight: '600',
     },
     textDark: {
       color: '#fff',

@@ -1,59 +1,75 @@
 import { TransportItem } from '../store/slices/favoritesSlice';
 
-// Mock transport data based on DummyJSON products
-// In a real app, you could use TransportAPI or similar
+// TransportAPI credentials
+const TRANSPORT_API_ID = '24be61e9';
+const TRANSPORT_API_KEY = '5aa8f192fab126e1d6fef370e5b2bc8d';
+const TRANSPORT_API_BASE = 'https://transportapi.com/v3/uk';
+
+// Default location for demo (London)
+const DEFAULT_LAT = '51.5074';
+const DEFAULT_LON = '-0.1278';
+
 export const transportService = {
   getRoutes: async (): Promise<TransportItem[]> => {
     try {
-      // Using DummyJSON products and transforming them into transport routes
-      const response = await fetch('https://dummyjson.com/products?limit=20');
+      // Fetch bus stops near default location
+      const busStopsUrl = `${TRANSPORT_API_BASE}/places.json?lat=${DEFAULT_LAT}&lon=${DEFAULT_LON}&type=bus_stop&app_id=${TRANSPORT_API_ID}&app_key=${TRANSPORT_API_KEY}`;
+      
+      const response = await fetch(busStopsUrl);
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error('Failed to fetch routes');
+        throw new Error('Failed to fetch routes from TransportAPI');
       }
       
-      // Transform products into transport items
-      const routes: TransportItem[] = data.products.map((product: any, index: number) => ({
-        id: product.id.toString(),
-        title: `${getTransportType(index)} to ${product.title}`,
-        description: product.description,
-        image: product.thumbnail,
-        status: getStatus(product.rating),
+      // Transform TransportAPI data into transport items
+      if (!data.member || data.member.length === 0) {
+        // Fallback to mock data if no results
+        return getMockRoutes();
+      }
+
+      const routes: TransportItem[] = data.member.slice(0, 20).map((stop: any, index: number) => ({
+        id: stop.atcocode || `stop-${index}`,
+        title: `${getTransportType(index)} to ${stop.name || 'Unknown Destination'}`,
+        description: `${stop.description || 'Public transport route'} - ${stop.locality || 'Local area'}`,
+        image: getTransportImage(index),
+        status: index < 5 ? 'Popular' : index < 12 ? 'Active' : 'Upcoming',
         type: getTransportType(index),
         departure: getDepartureTime(index),
         arrival: getArrivalTime(index),
         duration: getDuration(index),
-        price: product.price,
+        price: Math.round((5 + Math.random() * 15) * 100) / 100,
       }));
       
       return routes;
     } catch (error) {
-      console.error('Error fetching routes:', error);
-      throw error;
+      console.error('Error fetching routes from TransportAPI:', error);
+      // Return mock data as fallback
+      return getMockRoutes();
     }
   },
 
   getRouteById: async (id: string): Promise<TransportItem> => {
     try {
-      const response = await fetch(`https://dummyjson.com/products/${id}`);
-      const product = await response.json();
+      const routes = await transportService.getRoutes();
+      const route = routes.find(r => r.id === id);
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch route details');
+      if (route) {
+        return route;
       }
       
+      // Fallback
       return {
-        id: product.id.toString(),
-        title: `${getTransportType(parseInt(id))} to ${product.title}`,
-        description: product.description,
-        image: product.thumbnail,
-        status: getStatus(product.rating),
-        type: getTransportType(parseInt(id)),
-        departure: getDepartureTime(parseInt(id)),
-        arrival: getArrivalTime(parseInt(id)),
-        duration: getDuration(parseInt(id)),
-        price: product.price,
+        id,
+        title: 'Transport Route',
+        description: 'Route details from TransportAPI',
+        image: getTransportImage(0),
+        status: 'Active',
+        type: 'Bus',
+        departure: '09:00',
+        arrival: '10:30',
+        duration: '1h 30m',
+        price: 12.50,
       };
     } catch (error) {
       console.error('Error fetching route details:', error);
@@ -62,10 +78,45 @@ export const transportService = {
   },
 };
 
+// Fallback mock data
+const getMockRoutes = (): TransportItem[] => {
+  const destinations = [
+    'Oxford Street', 'Piccadilly Circus', 'Leicester Square', 'Covent Garden',
+    'Tower Bridge', 'Big Ben', 'Buckingham Palace', 'Hyde Park',
+    'King\'s Cross', 'Liverpool Street', 'Victoria Station', 'Waterloo',
+    'Camden Town', 'Shoreditch', 'Greenwich', 'Canary Wharf',
+    'Heathrow Airport', 'Gatwick Airport', 'St Pancras', 'Paddington'
+  ];
+
+  return destinations.map((destination, index) => ({
+    id: `route-${index}`,
+    title: `${getTransportType(index)} to ${destination}`,
+    description: `Regular service to ${destination}. Comfortable journey with all amenities.`,
+    image: getTransportImage(index),
+    status: index < 5 ? 'Popular' : index < 12 ? 'Active' : 'Upcoming',
+    type: getTransportType(index),
+    departure: getDepartureTime(index),
+    arrival: getArrivalTime(index),
+    duration: getDuration(index),
+    price: Math.round((5 + Math.random() * 15) * 100) / 100,
+  }));
+};
+
 // Helper functions to generate transport-related data
 const getTransportType = (index: number): string => {
   const types = ['Bus', 'Train', 'Metro', 'Ferry', 'Tram'];
   return types[index % types.length];
+};
+
+const getTransportImage = (index: number): string => {
+  const images = [
+    'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400', // Bus
+    'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400', // Train
+    'https://images.unsplash.com/photo-1581262177000-8c619cf0ca3c?w=400', // Metro/Subway
+    'https://images.unsplash.com/photo-1605128258273-37290ea0196c?w=400', // Ferry
+    'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400', // Tram
+  ];
+  return images[index % images.length];
 };
 
 const getStatus = (rating: number): string => {
@@ -86,5 +137,7 @@ const getArrivalTime = (index: number): string => {
 
 const getDuration = (index: number): string => {
   const minutes = 30 + (index % 5) * 15;
-  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
 };

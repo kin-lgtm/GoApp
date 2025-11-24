@@ -77,7 +77,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
             <View style={styles.infoCard}>
               <View style={styles.infoRow}>
                 <View style={styles.infoItem}>
-                  <Feather name="navigation" size={20} color="#00C853" />
+                  <Feather name={getTransportIcon(item.type)} size={20} color="#00C853" />
                   <View style={styles.infoTextContainer}>
                     <Text style={[styles.infoLabel, isDarkMode && styles.textSecondaryDark]}>Type</Text>
                     <Text style={[styles.infoValue, isDarkMode && styles.textDark]}>{item.type}</Text>
@@ -163,16 +163,29 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
   );
 };
 
+const getTransportIcon = (type?: string): any => {
+  const typeStr = type?.toLowerCase() || '';
+  if (typeStr.includes('train')) return 'navigation';
+  if (typeStr.includes('bus')) return 'truck';
+  if (typeStr.includes('metro') || typeStr.includes('subway')) return 'zap';
+  if (typeStr.includes('tram')) return 'minus';
+  if (typeStr.includes('ferry') || typeStr.includes('boat')) return 'anchor';
+  if (typeStr.includes('flight') || typeStr.includes('plane')) return 'send';
+  if (typeStr.includes('taxi') || typeStr.includes('cab')) return 'navigation-2';
+  if (typeStr.includes('bike') || typeStr.includes('bicycle')) return 'circle';
+  return 'navigation'; // Default
+};
+
 const getStatusBadgeStyle = (status?: string) => {
   switch (status) {
     case 'Popular':
-      return { backgroundColor: '#34C759' };
+      return { backgroundColor: '#00C853' };
     case 'Active':
-      return { backgroundColor: '#007AFF' };
+      return { backgroundColor: '#00A843' };
     case 'Upcoming':
-      return { backgroundColor: '#FF9500' };
+      return { backgroundColor: '#00E863' };
     default:
-      return { backgroundColor: '#999' };
+      return { backgroundColor: '#008F43' };
   }
 };
 
@@ -306,6 +319,7 @@ const getStyles = (isDarkMode: boolean) =>
       justifyContent: 'space-between',
       backgroundColor: isDarkMode ? '#1C1C1E' : '#fff',
       padding: 20,
+      paddingBottom: 45,
       borderTopWidth: 1,
       borderTopColor: isDarkMode ? '#2C2C2E' : '#E5E5EA',
     },

@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
+import { Platform } from 'react-native';
 import { useAppSelector } from '../../hooks/redux-hooks';
 
 import FavoritesScreen from '../../screens/FavoritesScreen';
@@ -21,8 +22,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: isDarkMode ? '#1C1C1E' : '#fff',
           borderTopColor: isDarkMode ? '#2C2C2E' : '#E5E5EA',
-          height: 60,
-          paddingBottom: 8,
+          height: Platform.OS === 'ios' ? 100 : 90,
+          paddingBottom: Platform.OS === 'ios' ? 35 : 25,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
