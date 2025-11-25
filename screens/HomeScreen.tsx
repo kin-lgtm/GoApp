@@ -31,6 +31,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<'All' | 'Bus' | 'Train'>('All');
+  const [location, setLocation] = useState<string>('London, UK');
 
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const favorites = useAppSelector((state) => state.favorites.items);
@@ -43,7 +45,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
 
   useEffect(() => {
     filterRoutes();
-  }, [searchQuery, routes]);
+  }, [searchQuery, routes, selectedFilter]);
 
   const fetchRoutes = async () => {
     try {
@@ -60,17 +62,23 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
   };
 
   const filterRoutes = () => {
-    if (!searchQuery.trim()) {
-      setFilteredRoutes(routes);
-      return;
+    let filtered = routes;
+
+    // Filter by transport type
+    if (selectedFilter !== 'All') {
+      filtered = filtered.filter((route) => route.type === selectedFilter);
     }
 
-    const filtered = routes.filter(
-      (route) =>
-        route.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        route.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        route.type?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(
+        (route) =>
+          route.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          route.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          route.type?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
     setFilteredRoutes(filtered);
   };
 
@@ -143,7 +151,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
             </View>
             <View style={styles.infoItem}>
               <Feather name="clock" size={14} color="#666" />
-              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.duration}</Text>
+              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.arrival}</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={[styles.priceText, isDarkMode && styles.textDark]}>${item.price}</Text>
@@ -176,7 +184,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.greeting}>Hello, {user?.firstName || 'Traveler'}! 👋</Text>
-            <Text style={styles.headerSubtitle}>Where would you like to go?</Text>
+            <View style={styles.locationContainer}>
+              <Feather name="map-pin" size={14} color="#00C853" />
+              <Text style={styles.locationText}>{location}</Text>
+            </View>
           </View>
           <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
             <Feather name="log-out" size={22} color="#FF3B30" />
@@ -197,6 +208,35 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation: navProp }) => {
               <Feather name="x" size={20} color={isDarkMode ? '#999' : '#666'} />
             </TouchableOpacity>
           )}
+        </View>
+
+        <View style={styles.filterContainer}>
+          <TouchableOpacity
+            style={[styles.filterButton, selectedFilter === 'All' && styles.filterButtonActive]}
+            onPress={() => setSelectedFilter('All')}
+          >
+            <Text style={[styles.filterButtonText, selectedFilter === 'All' && styles.filterButtonTextActive]}>
+              All
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterButton, selectedFilter === 'Bus' && styles.filterButtonActive]}
+            onPress={() => setSelectedFilter('Bus')}
+          >
+            <Feather name="truck" size={16} color={selectedFilter === 'Bus' ? '#fff' : '#00C853'} style={styles.filterIcon} />
+            <Text style={[styles.filterButtonText, selectedFilter === 'Bus' && styles.filterButtonTextActive]}>
+              Bus
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterButton, selectedFilter === 'Train' && styles.filterButtonActive]}
+            onPress={() => setSelectedFilter('Train')}
+          >
+            <MaterialIcons name="train" size={16} color={selectedFilter === 'Train' ? '#fff' : '#00C853'} style={styles.filterIcon} />
+            <Text style={[styles.filterButtonText, selectedFilter === 'Train' && styles.filterButtonTextActive]}>
+              Train
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -276,6 +316,17 @@ const getStyles = (isDarkMode: boolean) =>
       fontWeight: 'bold',
       color: isDarkMode ? '#fff' : '#00C853',
     },
+    locationContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginTop: 6,
+    },
+    locationText: {
+      fontSize: 14,
+      color: isDarkMode ? '#999' : '#666',
+      fontWeight: '500',
+    },
     headerSubtitle: {
       fontSize: 14,
       color: isDarkMode ? '#999' : '#666',
@@ -304,6 +355,36 @@ const getStyles = (isDarkMode: boolean) =>
       flex: 1,
       fontSize: 16,
       color: isDarkMode ? '#fff' : '#000',
+    },
+    filterContainer: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 12,
+    },
+    filterButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+      borderRadius: 20,
+      backgroundColor: isDarkMode ? '#2C2C2E' : '#F2F2F7',
+      borderWidth: 1,
+      borderColor: isDarkMode ? '#3A3A3C' : '#E5E5EA',
+    },
+    filterButtonActive: {
+      backgroundColor: '#00C853',
+      borderColor: '#00C853',
+    },
+    filterIcon: {
+      marginRight: 6,
+    },
+    filterButtonText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: isDarkMode ? '#fff' : '#000',
+    },
+    filterButtonTextActive: {
+      color: '#fff',
     },
     listContent: {
       padding: 20,

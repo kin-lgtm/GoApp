@@ -34,7 +34,7 @@ const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation: navProp }
       onPress={() => navigation.navigate('details', { item: JSON.stringify(item) })}
     >
       <Image
-        source={{ uri: item.image }}
+        source={typeof item.image === 'string' ? { uri: item.image } : item.image}
         style={styles.cardImage}
         resizeMode="cover"
       />
@@ -65,7 +65,7 @@ const FavoritesScreen: React.FC<FavoritesScreenProps> = ({ navigation: navProp }
             </View>
             <View style={styles.infoItem}>
               <Feather name="clock" size={14} color="#666" />
-              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.duration}</Text>
+              <Text style={[styles.infoText, isDarkMode && styles.textDark]}>{item.arrival}</Text>
             </View>
             <View style={styles.infoItem}>
               <Text style={[styles.priceText, isDarkMode && styles.textDark]}>${item.price}</Text>
